@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light}body{margin:0;font:14px system-ui}</style>
+<title>Boaz Is Two</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Fredoka:wght@400;600&display=swap">
+<style>
+/* Layout: one centered sticker-style card. Headline above, painted scene in the middle, message and name field below. */
+:root {
+  --sun: #FFE27A;
+  --ink: #2A2350;
+  --sky: #BFE9F7;
+  --pink: #FF8FB1;
+  --grass: #6CC070;
+  --grass-deep: #4FA86A;
+  --display: 'Bagel Fat One', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+  --body: 'Fredoka', 'Trebuchet MS', sans-serif;
+  color-scheme: light;
+}
+body {
+  background: var(--sun);
+  color: var(--ink);
+  font-family: var(--body);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding-inline: 16px;
+  padding-block: 28px 40px;
+}
+h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 8.5vw, 3.3rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-wrap: balance;
+  margin: 0;
+  max-width: 520px;
+}
+.card {
+  width: 100%;
+  max-width: 520px;
+  border: 3px solid var(--ink);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0 var(--ink);
+  background: var(--sky);
+}
+#scene { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.msg { font-size: 1.2rem; line-height: 1.45; text-align: center; max-width: 32ch; margin: 0; text-wrap: balance; }
+.hint { font-size: 1rem; font-weight: 600; margin: -8px 0 0; text-align: center; }
+.play {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  color: var(--ink);
+  background: var(--pink);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  padding: 12px 30px;
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+}
+.play:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+.play:disabled { opacity: .75; cursor: default; }
+.play:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+
+/* scene parts */
+.animal { cursor: default; }
+#scene.ready .animal { cursor: pointer; }
+.animal:focus { outline: none; }
+.hit { fill: transparent; }
+.ring { fill: none; stroke: var(--ink); stroke-width: 3; stroke-dasharray: 6 6; opacity: 0; }
+.animal:focus-visible .ring { opacity: 1; }
+#bubble { opacity: 0; pointer-events: none; transition: opacity .15s; }
+#bubble.on { opacity: 1; }
+
+/* motion: one load sequence (the 2 drops, then the animals pop up one by one), then gentle ambient movement */
+.two, .pop, .idle, .bob { transform-box: fill-box; transform-origin: 50% 100%; }
+.two { animation: drop .9s cubic-bezier(.3, .7, .4, 1) .2s backwards; }
+.pop { animation: rise .6s ease-out backwards; animation-delay: calc(var(--i) * .18s + 1.05s); }
+.idle { animation: breathe 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * .45s); }
+.bob { animation: bob 3.4s ease-in-out infinite; animation-delay: calc(var(--i) * .6s); }
+.cloud { animation: drift 9s ease-in-out infinite; animation-delay: calc(var(--i) * -4s); }
+@keyframes drop {
+  0% { transform: translateY(-280px); }
+  60% { transform: translateY(8px) scale(1.05, .93); }
+  80% { transform: translateY(-4px); }
+  100% { transform: none; }
+}
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(90px) scale(.6); }
+  15% { opacity: 1; }
+  70% { opacity: 1; transform: translateY(-8px) scale(1.05); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, .97); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(18px); } }
+@media (prefers-reduced-motion: reduce) {
+  .two, .pop, .idle, .bob, .cloud { animation: none; }
+  #bubble { transition: none; }
+}
+</style>
+
+<h1 id="title">Happy 2nd birthday, Boaz!</h1>
+
+<div class="card">
+<svg id="scene" viewBox="0 0 400 440" role="img" aria-label="Boaz smiling inside the sun. A big number 2 with a giraffe, a monkey, an elephant and mushrooms standing in front of it, and balloons floating above.">
+  <rect width="400" height="440" fill="#BFE9F7"/>
+
+  <defs><clipPath id="sunclip"><circle cx="338" cy="54" r="33"/></clipPath></defs>
+  <circle cx="338" cy="54" r="44" fill="#FFD23D"/>
+  <image href="data:image/jpeg;base64,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" x="305" y="21" width="66" height="66" clip-path="url(#sunclip)" preserveAspectRatio="xMidYMid slice"/>
+
+  <g class="cloud" style="--i:0">
+    <ellipse cx="80" cy="56" rx="34" ry="13" fill="#fff"/>
+    <ellipse cx="96" cy="45" rx="20" ry="14" fill="#fff"/>
+    <ellipse cx="60" cy="48" rx="16" ry="11" fill="#fff"/>
+  </g>
+  <g class="cloud" style="--i:1">
+    <ellipse cx="238" cy="36" rx="28" ry="11" fill="#fff"/>
+    <ellipse cx="252" cy="27" rx="16" ry="11" fill="#fff"/>
+    <ellipse cx="222" cy="29" rx="13" ry="9" fill="#fff"/>
+  </g>
+
+  <g>
+    <circle cx="30" cy="118" r="4" fill="#FF8FB1"/>
+    <circle cx="372" cy="150" r="4" fill="#9B7BEA"/>
+    <circle cx="150" cy="30" r="3.5" fill="#FFB020"/>
+    <rect x="18" y="170" width="9" height="9" rx="2" fill="#5BB8F5" transform="rotate(25 22 174)"/>
+    <rect x="365" y="96" width="9" height="9" rx="2" fill="#FF8FB1" transform="rotate(-20 369 100)"/>
+    <rect x="278" y="14" width="8" height="8" rx="2" fill="#6CC070" transform="rotate(35 282 18)"/>
+    <circle cx="48" cy="236" r="3.5" fill="#9B7BEA"/>
+    <circle cx="384" cy="232" r="3.5" fill="#FFB020"/>
+  </g>
+
+  <ellipse cx="120" cy="485" rx="270" ry="95" fill="#6CC070"/>
+  <ellipse cx="340" cy="495" rx="200" ry="95" fill="#4FA86A"/>
+
+  <!-- balloons -->
+  <g class="bob" style="--i:0">
+    <path d="M70 176 q8 40 40 78" stroke="#2A2350" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="70" cy="150" rx="22" ry="27" fill="#5BB8F5"/>
+    <ellipse cx="62" cy="140" rx="5" ry="8" fill="#fff" opacity=".5"/>
+    <polygon points="70,176 65,184 75,184" fill="#5BB8F5"/>
+  </g>
+  <g class="bob" style="--i:1">
+    <path d="M330 166 q-6 40 -40 90" stroke="#2A2350" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="330" cy="140" rx="22" ry="27" fill="#9B7BEA"/>
+    <ellipse cx="322" cy="130" rx="5" ry="8" fill="#fff" opacity=".5"/>
+    <polygon points="330,166 325,174 335,174" fill="#9B7BEA"/>
+  </g>
+  <g class="bob" style="--i:2">
+    <path d="M205 106 q-8 25 -2 50" stroke="#2A2350" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="205" cy="80" rx="22" ry="27" fill="#FFB020"/>
+    <ellipse cx="197" cy="70" rx="5" ry="8" fill="#fff" opacity=".5"/>
+    <polygon points="205,106 200,114 210,114" fill="#FFB020"/>
+  </g>
+
+  <!-- the big 2 -->
+  <g class="two">
+    <text x="206" y="348" text-anchor="middle" font-family="'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',sans-serif" font-size="270" fill="#2A2350">2</text>
+    <text x="200" y="340" text-anchor="middle" font-family="'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',sans-serif" font-size="270" fill="#FF8FB1" stroke="#2A2350" stroke-width="9" stroke-linejoin="round" paint-order="stroke">2</text>
+  </g>
+
+  <!-- giraffe -->
+  <g class="animal" transform="translate(55,415)" tabindex="0" role="button" aria-label="Giraffe" data-say="Munch munch!" data-bx="60" data-by="212">
+    <ellipse class="ring" cx="0" cy="-85" rx="36" ry="100"/>
+    <rect class="hit" x="-36" y="-180" width="72" height="180"/>
+    <g class="pop" style="--i:0"><g class="idle" style="--i:0">
+      <rect x="-21" y="-34" width="10" height="34" rx="5" fill="#FFC83D"/>
+      <rect x="11" y="-34" width="10" height="34" rx="5" fill="#FFC83D"/>
+      <ellipse cx="0" cy="-44" rx="27" ry="20" fill="#FFC83D"/>
+      <rect x="-9" y="-132" width="18" height="96" rx="9" fill="#FFC83D"/>
+      <ellipse cx="3" cy="-138" rx="21" ry="16" fill="#FFC83D"/>
+      <ellipse cx="14" cy="-132" rx="12" ry="9" fill="#FFE08A"/>
+      <rect x="-8" y="-162" width="4" height="12" rx="2" fill="#2A2350"/>
+      <circle cx="-6" cy="-164" r="4" fill="#2A2350"/>
+      <rect x="4" y="-162" width="4" height="12" rx="2" fill="#2A2350"/>
+      <circle cx="6" cy="-164" r="4" fill="#2A2350"/>
+      <circle cx="-3" cy="-141" r="3" fill="#2A2350"/>
+      <path d="M9 -128 q5 4 10 0" stroke="#2A2350" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="-11" cy="-44" r="5" fill="#C9792B"/>
+      <circle cx="9" cy="-50" r="4" fill="#C9792B"/>
+      <circle cx="0" cy="-82" r="4" fill="#C9792B"/>
+      <circle cx="2" cy="-106" r="3.5" fill="#C9792B"/>
+    </g></g>
+  </g>
+
+  <!-- monkey -->
+  <g class="animal" transform="translate(125,415)" tabindex="0" role="button" aria-label="Monkey" data-say="Ooh ooh!" data-bx="125" data-by="283">
+    <ellipse class="ring" cx="0" cy="-45" rx="40" ry="56"/>
+    <rect class="hit" x="-40" y="-96" width="80" height="96"/>
+    <g class="pop" style="--i:1"><g class="idle" style="--i:1">
+      <path d="M20 -14 q22 2 18 -20 q-1 -7 -7 -5" stroke="#A66B3F" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="-13" cy="-5" rx="10" ry="6" fill="#8A542E"/>
+      <ellipse cx="13" cy="-5" rx="10" ry="6" fill="#8A542E"/>
+      <ellipse cx="0" cy="-24" rx="24" ry="22" fill="#A66B3F"/>
+      <ellipse cx="0" cy="-20" rx="14" ry="13" fill="#F3D3A5"/>
+      <ellipse cx="-26" cy="-26" rx="7" ry="14" fill="#A66B3F" transform="rotate(12 -26 -26)"/>
+      <ellipse cx="26" cy="-26" rx="7" ry="14" fill="#A66B3F" transform="rotate(-12 26 -26)"/>
+      <circle cx="-25" cy="-64" r="10" fill="#A66B3F"/>
+      <circle cx="25" cy="-64" r="10" fill="#A66B3F"/>
+      <circle cx="-25" cy="-64" r="5" fill="#F3D3A5"/>
+      <circle cx="25" cy="-64" r="5" fill="#F3D3A5"/>
+      <circle cx="0" cy="-62" r="24" fill="#A66B3F"/>
+      <circle cx="-8" cy="-61" r="10" fill="#F3D3A5"/>
+      <circle cx="8" cy="-61" r="10" fill="#F3D3A5"/>
+      <ellipse cx="0" cy="-54" rx="13" ry="10" fill="#F3D3A5"/>
+      <circle cx="-7" cy="-65" r="3" fill="#2A2350"/>
+      <circle cx="7" cy="-65" r="3" fill="#2A2350"/>
+      <circle cx="-2" cy="-57" r="1.4" fill="#2A2350"/>
+      <circle cx="2" cy="-57" r="1.4" fill="#2A2350"/>
+      <path d="M-6 -52 q6 6 12 0" stroke="#2A2350" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g></g>
+  </g>
+
+  <!-- mushrooms -->
+  <g class="animal" transform="translate(224,415)" tabindex="0" role="button" aria-label="Mushrooms" data-say="Pop!" data-bx="224" data-by="308">
+    <ellipse class="ring" cx="0" cy="-30" rx="46" ry="42"/>
+    <rect class="hit" x="-46" y="-72" width="92" height="72"/>
+    <g class="pop" style="--i:2"><g class="idle" style="--i:2">
+      <rect x="-30" y="-18" width="8" height="18" rx="4" fill="#FFF1D6"/>
+      <ellipse cx="-26" cy="-20" rx="16" ry="11" fill="#FFB020"/>
+      <circle cx="-31" cy="-23" r="2.5" fill="#fff"/>
+      <circle cx="-22" cy="-19" r="2" fill="#fff"/>
+      <rect x="20" y="-16" width="8" height="16" rx="4" fill="#FFF1D6"/>
+      <ellipse cx="24" cy="-18" rx="14" ry="10" fill="#9B7BEA"/>
+      <circle cx="20" cy="-21" r="2.3" fill="#fff"/>
+      <circle cx="28" cy="-17" r="1.8" fill="#fff"/>
+      <rect x="-7" y="-32" width="14" height="32" rx="6" fill="#FFF1D6"/>
+      <ellipse cx="0" cy="-34" rx="26" ry="18" fill="#FF5A5F"/>
+      <circle cx="-12" cy="-40" r="4" fill="#fff"/>
+      <circle cx="6" cy="-46" r="4.5" fill="#fff"/>
+      <circle cx="15" cy="-33" r="3" fill="#fff"/>
+      <circle cx="-4" cy="-18" r="2" fill="#2A2350"/>
+      <circle cx="4" cy="-18" r="2" fill="#2A2350"/>
+      <path d="M-3 -13 q3 3 6 0" stroke="#2A2350" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </g></g>
+  </g>
+
+  <!-- elephant -->
+  <g class="animal" transform="translate(317,415) scale(1.25)" tabindex="0" role="button" aria-label="Elephant" data-say="Toot toot!" data-bx="317" data-by="262">
+    <ellipse class="ring" cx="0" cy="-48" rx="56" ry="62"/>
+    <rect class="hit" x="-58" y="-106" width="116" height="106"/>
+    <g class="pop" style="--i:3"><g class="idle" style="--i:3">
+      <rect x="-24" y="-26" width="15" height="26" rx="7" fill="#8D9BEA"/>
+      <rect x="9" y="-26" width="15" height="26" rx="7" fill="#8D9BEA"/>
+      <ellipse cx="0" cy="-36" rx="34" ry="28" fill="#9BA8F0"/>
+      <circle cx="-36" cy="-62" r="22" fill="#8D9BEA"/>
+      <circle cx="-36" cy="-62" r="13" fill="#FFB3C9"/>
+      <circle cx="36" cy="-62" r="22" fill="#8D9BEA"/>
+      <circle cx="36" cy="-62" r="13" fill="#FFB3C9"/>
+      <circle cx="0" cy="-60" r="28" fill="#9BA8F0"/>
+      <path d="M0 -50 v18 q0 12 -12 12" stroke="#9BA8F0" stroke-width="13" fill="none" stroke-linecap="round"/>
+      <circle cx="-10" cy="-66" r="3" fill="#2A2350"/>
+      <circle cx="10" cy="-66" r="3" fill="#2A2350"/>
+      <circle cx="-18" cy="-54" r="4.5" fill="#FF8FB1" opacity=".7"/>
+      <circle cx="18" cy="-54" r="4.5" fill="#FF8FB1" opacity=".7"/>
+    </g></g>
+  </g>
+
+  <!-- speech bubble, moved next to whichever animal was tapped -->
+  <g id="bubble" aria-hidden="true">
+    <rect id="bb" x="0" y="0" width="100" height="36" rx="18" fill="#fff" stroke="#2A2350" stroke-width="3"/>
+    <text id="bt" x="50" y="25" text-anchor="middle" font-family="'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',sans-serif" font-size="18" fill="#2A2350"></text>
+  </g>
+</svg>
+</div>
+
+<p class="msg">Two whole years. Time to trumpet, swing, build Duplo, read one more story and spot the tallest mushroom.</p>
+<button class="play" id="play" type="button">Play the song</button>
+<p class="hint" id="hint" aria-live="polite">Press play for a birthday song.</p>
+
+<script>
+(function () {
+  var scene = document.getElementById('scene');
+  var bubble = document.getElementById('bubble');
+  var bb = document.getElementById('bb');
+  var bt = document.getElementById('bt');
+  var playBtn = document.getElementById('play');
+  var hint = document.getElementById('hint');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var animals = Array.prototype.slice.call(document.querySelectorAll('.animal'));
+  var locked = true;
+  var playing = false;
+  var timer;
+
+  /* ---------- sound ---------- */
+  var ctx = null, master = null, noiseBuf = null;
+  function audio() {
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+      var comp = ctx.createDynamicsCompressor();
+      master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(comp);
+      comp.connect(ctx.destination);
+      noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.2), ctx.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function env(g, t, peak, attack, dur) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  }
+  function tone(o) {
+    var osc = ctx.createOscillator(), g = ctx.createGain(), node = osc;
+    osc.type = o.type || 'sine';
+    osc.frequency.setValueAtTime(o.f0, o.t);
+    if (o.f1) osc.frequency.exponentialRampToValueAtTime(o.f1, o.t + o.dur * (o.ramp || 1));
+    if (o.vib) {
+      var lfo = ctx.createOscillator(), lg = ctx.createGain();
+      lfo.frequency.value = o.vib;
+      lg.gain.value = o.vibDepth || 12;
+      lfo.connect(lg);
+      lg.connect(osc.frequency);
+      lfo.start(o.t);
+      lfo.stop(o.t + o.dur + 0.05);
+    }
+    if (o.lp) {
+      var f = ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.value = o.lp;
+      osc.connect(f);
+      node = f;
+    }
+    node.connect(g);
+    g.connect(master);
+    env(g, o.t, o.gain || 0.3, o.attack || 0.01, o.dur);
+    osc.start(o.t);
+    osc.stop(o.t + o.dur + 0.05);
+  }
+  function noiseBurst(t, dur, gain) {
+    var src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+    src.buffer = noiseBuf;
+    f.type = 'lowpass';
+    f.frequency.value = 900;
+    src.connect(f);
+    f.connect(g);
+    g.connect(master);
+    env(g, t, gain, dur * 0.35, dur);
+    src.start(t);
+    src.stop(t + dur + 0.02);
+  }
+  function musicBox(freq, dur, t, decayTail) {
+    var parts = [[1, 0.22], [2, 0.1], [3.01, 0.05]];
+    parts.forEach(function (p, i) {
+      tone({ type: 'sine', f0: freq * p[0], t: t, dur: i === 0 ? dur + decayTail : 0.5 + i * 0.1, gain: p[1], attack: 0.004 });
+    });
+  }
+  var SOUNDS = {
+    'Giraffe': function (t) { for (var k = 0; k < 3; k++) noiseBurst(t + k * 0.17, 0.09, 0.6); },
+        'Monkey': function (t) {
+      for (var k = 0; k < 2; k++) {
+        tone({ f0: 480, f1: 740, t: t + k * 0.38, dur: 0.28, gain: 0.32, vib: 9, vibDepth: 14, attack: 0.03 });
+        tone({ f0: 960, f1: 1480, t: t + k * 0.38, dur: 0.28, gain: 0.08, attack: 0.03 });
+      }
+    },
+    'Elephant': function (t) {
+      tone({ type: 'sawtooth', f0: 300, f1: 480, ramp: 0.4, t: t, dur: 0.3, gain: 0.2, lp: 1100, vib: 22, vibDepth: 6, attack: 0.02 });
+      tone({ type: 'sawtooth', f0: 300, f1: 480, ramp: 0.3, t: t + 0.38, dur: 0.46, gain: 0.2, lp: 1100, vib: 22, vibDepth: 6, attack: 0.02 });
+    },
+    'Mushrooms': function (t) {
+      tone({ f0: 1050, f1: 160, t: t, dur: 0.12, gain: 0.5, attack: 0.002 });
+    }
+  };
+
+  /* ---------- motion ---------- */
+  function hop(el) {
+    if (reduce.matches) return;
+    var inner = el.querySelector('.idle');
+    if (inner && inner.animate) {
+      inner.animate([
+        { transform: 'translateY(0) scale(1,1)', offset: 0 },
+        { transform: 'translateY(6px) scale(1.08,.9)', offset: 0.15 },
+        { transform: 'translateY(-34px) scale(.94,1.08)', offset: 0.5 },
+        { transform: 'translateY(0) scale(1.06,.94)', offset: 0.8 },
+        { transform: 'translateY(0) scale(1,1)', offset: 1 }
+      ], { duration: 560, easing: 'ease-out' });
+    }
+  }
+  function say(el) {
+    var word = el.getAttribute('data-say');
+    var cx = Number(el.getAttribute('data-bx'));
+    var y = Number(el.getAttribute('data-by'));
+    var w = 24 + word.length * 11;
+    var x = Math.max(6, Math.min(394 - w, cx - w / 2));
+    bb.setAttribute('width', w);
+    bt.setAttribute('x', w / 2);
+    bt.textContent = word;
+    bubble.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+    bubble.classList.add('on');
+    clearTimeout(timer);
+    timer = setTimeout(function () { bubble.classList.remove('on'); }, 1400);
+  }
+  function tap(el) {
+    if (locked) return;
+    var c = audio();
+    if (c) {
+      var fn = SOUNDS[el.getAttribute('aria-label')];
+      if (fn) fn(c.currentTime + 0.02);
+    }
+    say(el);
+    hop(el);
+  }
+
+  function setLocked(v) {
+    locked = v;
+    scene.classList.toggle('ready', !v);
+    animals.forEach(function (a) { a.setAttribute('aria-disabled', v ? 'true' : 'false'); });
+  }
+  setLocked(true);
+
+  /* ---------- the song ---------- */
+  var G4 = 392.0, A4 = 440.0, B4 = 493.88, C5 = 523.25, D5 = 587.33, E5 = 659.25, F5 = 698.46, G5 = 783.99;
+  var LINES = [
+    { n: [G4, G4, A4, G4, C5, B4], d: [0.75, 0.25, 1, 1, 1, 2] },
+    { n: [G4, G4, A4, G4, D5, C5], d: [0.75, 0.25, 1, 1, 1, 2] },
+    { n: [G4, G4, G5, E5, C5, B4, A4], d: [0.75, 0.25, 1, 1, 1, 1, 2] },
+    { n: [F5, F5, E5, C5, D5, C5], d: [0.75, 0.25, 1, 1, 1, 2] }
+  ];
+  var Q = 0.55;
+
+  function playSong() {
+    if (playing) return;
+    playing = true;
+    setLocked(true);
+    bubble.classList.remove('on');
+    playBtn.disabled = true;
+    playBtn.textContent = 'Playing…';
+    hint.textContent = 'Listen to the birthday song.';
+    var c = audio();
+    var r = 0.25;
+    var n = 0;
+    LINES.forEach(function (line) {
+      line.n.forEach(function (f, i) {
+        var d = line.d[i] * Q;
+        var last = i === line.n.length - 1;
+        if (c) musicBox(f, d, c.currentTime + r, last ? 1.5 : 0.8);
+        (function (idx, isLast) {
+          setTimeout(function () {
+            if (isLast) animals.forEach(hop);
+            else hop(animals[idx % animals.length]);
+          }, r * 1000);
+        })(n, last);
+        r += d;
+        n++;
+      });
+      r += 0.3;
+    });
+    setTimeout(function () {
+      playing = false;
+      setLocked(false);
+      playBtn.disabled = false;
+      playBtn.textContent = 'Play the song again';
+      hint.textContent = 'Tap an animal to say hi.';
+    }, (r + 1.2) * 1000);
+  }
+  playBtn.addEventListener('click', playSong);
+
+  animals.forEach(function (el) {
+    el.addEventListener('click', function () { tap(el); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(el); }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
